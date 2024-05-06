@@ -22,6 +22,21 @@ int main(int argc, char *argv[])
             }
         }
     }
+    if (output_file == NULL)
+    {
+        printf("Ошибка: отсутствует путь к входному файлу\n");
+        return 1;
+    }
+
+    FILE *file = fopen(output_file, "r");
+
+    if (file == NULL)
+    {
+        printf("Не удалось открыть файл %s\n", output_file);
+        return 1;
+    }
+
+    fclose(file);
 
     return 0;
 }
