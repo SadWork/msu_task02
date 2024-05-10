@@ -19,6 +19,19 @@ Constant constants[] = {
 
 const int num_constants = sizeof(constants) / sizeof(constants[0]);
 
+int string_is_empty(char *s)
+{
+    while (*s != 0)
+    {
+        if (*s != ' ' && *s != '\n')
+        {
+            return 0;
+        }
+        ++s;
+    }
+    return 1;
+}
+
 int main(int argc, char *argv[])
 {
 #ifndef DEBUG
@@ -61,8 +74,16 @@ int main(int argc, char *argv[])
     double l, r;
     fscanf(file, "%lf%lf", &l, &r);
 
+    // Основной цикл
     char s[BUF_SIZE];
-    while (fgets(s, BUF_SIZE, file) != NULL) {}
+    while (fgets(s, BUF_SIZE, file) != NULL)
+    {
+        if (string_is_empty(s))
+        {
+            continue;
+        }
+        printf("%s", s);
+    }
 
     fclose(file);
 
