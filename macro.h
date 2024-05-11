@@ -22,4 +22,7 @@
 
 #define error_msg_impl(...) GET_ERROR_MSG_IMPL_VARIADIC(__VA_ARGS__, ERROR_MSG_IMPL_VARIADIC, ERROR_MSG_IMPL)(__VA_ARGS__)
 
+#define break_if(condition)                                                                                                                          \
+    if (condition)                                                                                                                                   \
+    break
 #endif

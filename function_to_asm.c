@@ -20,75 +20,77 @@ void make_asm(char *s)
         TODO в функции не хватает логики построения дерева операций
     */
     Node *root = create_node();
-    char sub_s[BUF_SIZE];
+    cvector substr_vec;
+    cvector_init(&substr_vec, sizeof(char));
+    cvector_resize(&substr_vec, BUF_SIZE);
+
+    char *substr = (char *)substr_vec.data;
     while (*s)
     {
-        sscanf(s, "%s", sub_s);
-        s += strlen(sub_s);
+        sscanf(s, "%s", substr);
+        s += strlen(substr);
         while (*s == ' ' || *s == '\n')
         {
             ++s;
         }
 
         int not_found = 1;
-        if (!strcmp(sub_s, "x"))
+
+        do
         {
-            printf("Это x\n");
-            not_found = 0;
-        }
-        else
-        {
+            if (!strcmp(substr, "x"))
+            {
+                printf("Это x\n");
+                not_found = 0;
+                break;
+            }
             for (int i = 0; i < num_uoperations; ++i)
             {
-                if (!strcmp(sub_s, uoperations[i].name))
+                if (!strcmp(substr, uoperations[i].name))
                 {
                     char *next = uoperations[i].translation;
-                    while ((next = fsgets(sub_s, BUF_SIZE, next)) != NULL)
+                    while ((next = fsgets(substr, substr_vec.size, next)) != NULL)
                     {
-                        printf("%s\n", sub_s);
+                        printf("%s\n", substr);
                     }
                     not_found = 0;
                     break;
                 }
             }
-            if (not_found)
+            break_if(!not_found);
+            for (int i = 0; i < num_boperations; ++i)
             {
-                for (int i = 0; i < num_boperations; ++i)
+                if (!strcmp(substr, boperations[i].name))
                 {
-                    if (!strcmp(sub_s, boperations[i].name))
+                    char *next = boperations[i].translation;
+                    while ((next = fsgets(substr, substr_vec.size, next)) != NULL)
                     {
-                        char *next = boperations[i].translation;
-                        while ((next = fsgets(sub_s, BUF_SIZE, next)) != NULL)
-                        {
-                            printf("%s\n", sub_s);
-                        }
-                        not_found = 0;
-                        break;
+                        printf("%s\n", substr);
                     }
-                }
-
-                if (not_found)
-                {
-                    for (int i = 0; i < num_constants; ++i)
-                    {
-                        if (!strcmp(sub_s, constants[i].name))
-                        {
-                            printf("%lf\n", constants[i].value);
-                            not_found = 0;
-                            break;
-                        }
-                    }
-                    if (not_found)
-                    {
-                        double value;
-                        sscanf(sub_s, "%lf", &value);
-                        printf("Это число! %lf\n", value);
-                        not_found = 0;
-                    }
+                    not_found = 0;
+                    break;
                 }
             }
-        }
+            break_if(!not_found);
+            for (int i = 0; i < num_constants; ++i)
+            {
+                if (!strcmp(substr, constants[i].name))
+                {
+                    printf("%lf\n", constants[i].value);
+                    not_found = 0;
+                    break;
+                }
+            }
+            break_if(!not_found);
+
+            double value;
+            sscanf(substr, "%lf", &value);
+            printf("Это число! %lf\n", value);
+            not_found = 0;
+
+        } while (0);
     }
+    cvector_free(&substr_vec);
     operation_tree_free(root);
 }
 
