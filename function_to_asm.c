@@ -8,8 +8,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define EPS      1e-3
-#define BUF_SIZE 2000
+#define EPS                             1e-3
+#define BUF_SIZE                        2000
+#define MAX_LEN_INDEX_CONST_DECLARATION 15
 
 void make_asm(char *s)
 {
@@ -19,7 +20,9 @@ void make_asm(char *s)
 
         TODO в функции не хватает логики построения дерева операций
     */
-    Node *root = create_node();
+    cvector section_data_vec;
+    double *section_data = (double *)cvector_init(&section_data_vec, sizeof(double *));
+    Node *root           = create_node();
 
     cvector nodes_vec;
     Node **nodes = (Node **)cvector_init(&nodes_vec, sizeof(Node *));
@@ -28,6 +31,8 @@ void make_asm(char *s)
     cvector_init(&substr_vec, sizeof(char));
     char *substr = (char *)cvector_resize(&substr_vec, BUF_SIZE);
 
+    char int2str_buffer[MAX_LEN_INDEX_CONST_DECLARATION];
+    int num_section_data_items = 0;
     while (*s)
     {
         sscanf(s, "%s", substr);
@@ -48,8 +53,7 @@ void make_asm(char *s)
                 new_node->value = (char *)malloc(sizeof("fld qword [ebp + 8]"));
                 strcpy(new_node->value, "fld qword [ebp + 8]");
 
-                nodes = (Node **)cvector_push_back(&nodes_vec, &new_node);
-                printf("Это x\n");
+                nodes     = (Node **)cvector_push_back(&nodes_vec, &new_node);
                 not_found = 0;
                 break;
             }
@@ -97,7 +101,19 @@ void make_asm(char *s)
 
             double value;
             sscanf(substr, "%lf", &value);
-            printf("Это число! %lf\n", value);
+            section_data = (double *)cvector_push_back(&section_data_vec, &value);
+
+            sprintf(int2str_buffer, "%i", num_section_data_items);
+            int int2str_len = strlen(int2str_buffer);
+
+            Node *new_node = create_node();
+
+            new_node->value = (char *)malloc(sizeof("fld qword[constant]") + int2str_len);
+            sprintf(new_node->value, "fld qword[constant%s]", int2str_buffer);
+
+            nodes = (Node **)cvector_push_back(&nodes_vec, &new_node);
+            ++num_section_data_items;
+
         } while (not_found = 0);
     }
 
@@ -113,9 +129,10 @@ void make_asm(char *s)
             operation_tree_free(nodes[i]);
         }
     }
-    substr     = (char *)cvector_free(&nodes_vec);
-    nodes      = (Node **)cvector_free(&substr_vec);
-    is_cleaned = (int *)cvector_free(&is_cleaned_vec);
+    substr       = (char *)cvector_free(&nodes_vec);
+    section_data = (double *)cvector_free(&section_data_vec);
+    nodes        = (Node **)cvector_free(&substr_vec);
+    is_cleaned   = (int *)cvector_free(&is_cleaned_vec);
     operation_tree_free(root);
 }
 
