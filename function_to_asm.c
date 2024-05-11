@@ -20,11 +20,14 @@ void make_asm(char *s)
         TODO в функции не хватает логики построения дерева операций
     */
     Node *root = create_node();
+
+    cvector nodes_vec;
+    Node **nodes = (Node **)cvector_init(&nodes_vec, sizeof(Node *));
+
     cvector substr_vec;
     cvector_init(&substr_vec, sizeof(char));
-    cvector_resize(&substr_vec, BUF_SIZE);
+    char *substr = (char *)cvector_resize(&substr_vec, BUF_SIZE);
 
-    char *substr = (char *)substr_vec.data;
     while (*s)
     {
         sscanf(s, "%s", substr);
@@ -40,10 +43,12 @@ void make_asm(char *s)
         {
             if (!strcmp(substr, "x"))
             {
+
                 printf("Это x\n");
                 not_found = 0;
                 break;
             }
+
             for (int i = 0; i < num_uoperations; ++i)
             {
                 if (!strcmp(substr, uoperations[i].name))
@@ -58,6 +63,7 @@ void make_asm(char *s)
                 }
             }
             break_if(!not_found);
+
             for (int i = 0; i < num_boperations; ++i)
             {
                 if (!strcmp(substr, boperations[i].name))
@@ -72,6 +78,7 @@ void make_asm(char *s)
                 }
             }
             break_if(!not_found);
+
             for (int i = 0; i < num_constants; ++i)
             {
                 if (!strcmp(substr, constants[i].name))
@@ -86,11 +93,11 @@ void make_asm(char *s)
             double value;
             sscanf(substr, "%lf", &value);
             printf("Это число! %lf\n", value);
-            not_found = 0;
-
-        } while (0);
+        } while (not_found = 0);
     }
-    cvector_free(&substr_vec);
+
+    substr = (char *)cvector_free(&nodes_vec);
+    nodes  = (Node **)cvector_free(&substr_vec);
     operation_tree_free(root);
 }
 
