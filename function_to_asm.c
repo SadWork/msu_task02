@@ -1,3 +1,5 @@
+#include "operation_tree.c"
+
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -22,6 +24,8 @@ Constant constants[] = {
     { "e",  M_E},
     {"pi", M_PI}
 };
+const int num_constants = sizeof(constants) / sizeof(constants[0]);
+
 typedef struct
 {
     char *name;
@@ -34,11 +38,21 @@ Uoperation uoperations[] = {
     {"tan",           "fptan\nfstp st0"},
     {"ctg", "fptan\nfdiv st1\nfstp st1"}
 };
-
 const int num_uoperations = sizeof(uoperations) / sizeof(uoperations[0]);
-const int num_constants   = sizeof(constants) / sizeof(constants[0]);
 
-void make_asm(char *s) {}
+typedef struct
+{
+    char *name;
+    char *translation;
+} Boperation;
+Boperation boperations[] = {
+    { "/",  "fdiv"},
+    {"\\",  "fdiv"},
+    { "+", "faddp"},
+    { "*", "fmulp"},
+    { "-", "fsubp"}
+};
+const int num_boperations = sizeof(boperations) / sizeof(boperations[0]);
 
 int string_is_empty(char *s)
 {
@@ -52,8 +66,13 @@ int string_is_empty(char *s)
     }
     return 1;
 }
+
 char *fsgets(char *s, int size, char *input)
 {
+    if (!*input)
+    {
+        return NULL;
+    }
     while (size && *input != '\n' && *input)
     {
         *s = *input;
@@ -63,9 +82,84 @@ char *fsgets(char *s, int size, char *input)
     }
     *s = 0;
 
-    if (*input != 0)
+    if (*input)
         return input + 1;
-    return NULL;
+    return input;
+}
+
+void make_asm(char *s)
+{
+    Node *root = create_node();
+    char sub_s[BUF_SIZE];
+    while (*s)
+    {
+        sscanf(s, "%s", sub_s);
+        s += strlen(sub_s);
+        while (*s == ' ' || *s == '\n')
+        {
+            ++s;
+        }
+
+        int not_found = 1;
+        if (!strcmp(sub_s, "x"))
+        {
+            printf("Это x\n");
+            not_found = 0;
+        }
+        else
+        {
+            for (int i = 0; i < num_uoperations; ++i)
+            {
+                if (!strcmp(sub_s, uoperations[i].name))
+                {
+                    char *next = uoperations[i].translation;
+                    while ((next = fsgets(sub_s, BUF_SIZE, next)) != NULL)
+                    {
+                        printf("%s\n", sub_s);
+                    }
+                    not_found = 0;
+                    break;
+                }
+            }
+            if (not_found)
+            {
+                for (int i = 0; i < num_boperations; ++i)
+                {
+                    if (!strcmp(sub_s, boperations[i].name))
+                    {
+                        char *next = boperations[i].translation;
+                        while ((next = fsgets(sub_s, BUF_SIZE, next)) != NULL)
+                        {
+                            printf("%s\n", sub_s);
+                        }
+                        not_found = 0;
+                        break;
+                    }
+                }
+
+                if (not_found)
+                {
+                    for (int i = 0; i < num_constants; ++i)
+                    {
+                        if (!strcmp(sub_s, constants[i].name))
+                        {
+                            printf("%lf\n", constants[i].value);
+                            not_found = 0;
+                            break;
+                        }
+                    }
+                    if (not_found)
+                    {
+                        double value;
+                        sscanf(sub_s, "%lf", &value);
+                        printf("Это число! %lf\n", value);
+                        not_found = 0;
+                    }
+                }
+            }
+        }
+    }
+    operation_tree_free(root);
 }
 
 int main(int argc, char *argv[])
@@ -117,13 +211,6 @@ int main(int argc, char *argv[])
         if (string_is_empty(s))
         {
             continue;
-        }
-
-        // Пример вывод строки uoperation
-        char *next = uoperations[num_uoperations - 1].translation;
-        while ((next = fsgets(s, BUF_SIZE, next)) != NULL)
-        {
-            printf("%s\n", s);
         }
         make_asm(s);
     }
