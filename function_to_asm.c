@@ -1,4 +1,7 @@
+#include "cvector.c"
+#include "macro.h"
 #include "operation_tree.c"
+#include "tools.c"
 
 #include <math.h>
 #include <stdio.h>
@@ -6,13 +9,6 @@
 
 #define EPS      1e-3
 #define BUF_SIZE 2000
-#define DEBUG
-#ifndef M_E
-    #define M_E 2.7182818284590452354
-#endif
-#ifndef M_PI
-    #define M_PI 3.14159265358979323846
-#endif
 
 typedef struct
 {
@@ -54,41 +50,14 @@ Boperation boperations[] = {
 };
 const int num_boperations = sizeof(boperations) / sizeof(boperations[0]);
 
-int string_is_empty(char *s)
-{
-    while (*s != 0)
-    {
-        if (*s != ' ' && *s != '\n')
-        {
-            return 0;
-        }
-        ++s;
-    }
-    return 1;
-}
-
-char *fsgets(char *s, int size, char *input)
-{
-    if (!*input)
-    {
-        return NULL;
-    }
-    while (size && *input != '\n' && *input)
-    {
-        *s = *input;
-        ++s;
-        ++input;
-        --size;
-    }
-    *s = 0;
-
-    if (*input)
-        return input + 1;
-    return input;
-}
-
 void make_asm(char *s)
 {
+    /*
+        TODO сейчас всё работает на предположении, что strlen(s) < BUF_SIZE,
+        но можно было бы реализовать для строки переменной длины.
+
+        TODO в функции не хватает логики построения дерева операций
+    */
     Node *root = create_node();
     char sub_s[BUF_SIZE];
     while (*s)
@@ -179,14 +148,14 @@ int main(int argc, char *argv[])
             }
             else
             {
-                printf("Ошибка: отсутствует путь к входному файлу после флага -i/--input\n");
+                ERROR_MSG("Ошибка: отсутствует путь к входному файлу после флага -i/--input\n");
                 return 1;
             }
         }
     }
     if (input_file == NULL)
     {
-        printf("Ошибка: отсутствует путь к входному файлу\n");
+        ERROR_MSG("Ошибка: отсутствует путь к входному файлу\n");
         return 1;
     }
 #else
@@ -197,7 +166,7 @@ int main(int argc, char *argv[])
 
     if (file == NULL)
     {
-        printf("Не удалось открыть файл %s\n", input_file);
+        ERROR_MSG("Не удалось открыть файл %s\n", input_file);
         return 1;
     }
 
