@@ -46,5 +46,6 @@ void operation_tree_free(Node *root)
         operation_tree_free((Node *)(root->childs[root->number_childs]));
     }
     free(root->childs);
+    free(root->value);
     free(root);
 }

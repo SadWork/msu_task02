@@ -43,7 +43,12 @@ void make_asm(char *s)
         {
             if (!strcmp(substr, "x"))
             {
+                Node *new_node = create_node();
 
+                new_node->value = (char *)malloc(sizeof("fld qword [ebp + 8]"));
+                strcpy(new_node->value, "fld qword [ebp + 8]");
+
+                nodes = (Node **)cvector_push_back(&nodes_vec, &new_node);
                 printf("Это x\n");
                 not_found = 0;
                 break;
@@ -96,8 +101,21 @@ void make_asm(char *s)
         } while (not_found = 0);
     }
 
-    substr = (char *)cvector_free(&nodes_vec);
-    nodes  = (Node **)cvector_free(&substr_vec);
+    cvector is_cleaned_vec;
+    int *is_cleaned = cvector_init(&is_cleaned_vec, sizeof(int));
+    is_cleaned      = cvector_resize(&is_cleaned_vec, nodes_vec.size);
+    memset(is_cleaned, 0, is_cleaned_vec.size * sizeof(int));
+
+    for (int i = 0; i < nodes_vec.size; ++i)
+    {
+        if (!is_cleaned[i])
+        {
+            operation_tree_free(nodes[i]);
+        }
+    }
+    substr     = (char *)cvector_free(&nodes_vec);
+    nodes      = (Node **)cvector_free(&substr_vec);
+    is_cleaned = (int *)cvector_free(&is_cleaned_vec);
     operation_tree_free(root);
 }
 
