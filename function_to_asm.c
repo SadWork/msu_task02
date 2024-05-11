@@ -5,6 +5,12 @@
 #define EPS      1e-3
 #define BUF_SIZE 2000
 #define DEBUG
+#ifndef M_E
+    #define M_E 2.7182818284590452354
+#endif
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
 
 typedef struct
 {
@@ -16,8 +22,23 @@ Constant constants[] = {
     { "e",  M_E},
     {"pi", M_PI}
 };
+typedef struct
+{
+    char *name;
+    char *translation;
+} Uoperation;
 
-const int num_constants = sizeof(constants) / sizeof(constants[0]);
+Uoperation uoperations[] = {
+    {"sin",                      "fsin"},
+    {"cos",                      "fcos"},
+    {"tan",           "fptan\nfstp st0"},
+    {"ctg", "fptan\nfdiv st1\nfstp st1"}
+};
+
+const int num_uoperations = sizeof(uoperations) / sizeof(uoperations[0]);
+const int num_constants   = sizeof(constants) / sizeof(constants[0]);
+
+void make_asm(char *s) {}
 
 int string_is_empty(char *s)
 {
@@ -30,6 +51,21 @@ int string_is_empty(char *s)
         ++s;
     }
     return 1;
+}
+char *fsgets(char *s, int size, char *input)
+{
+    while (size && *input != '\n' && *input)
+    {
+        *s = *input;
+        ++s;
+        ++input;
+        --size;
+    }
+    *s = 0;
+
+    if (*input != 0)
+        return input + 1;
+    return NULL;
 }
 
 int main(int argc, char *argv[])
@@ -82,7 +118,14 @@ int main(int argc, char *argv[])
         {
             continue;
         }
-        printf("%s", s);
+
+        // Пример вывод строки uoperation
+        char *next = uoperations[num_uoperations - 1].translation;
+        while ((next = fsgets(s, BUF_SIZE, next)) != NULL)
+        {
+            printf("%s\n", s);
+        }
+        make_asm(s);
     }
 
     fclose(file);
