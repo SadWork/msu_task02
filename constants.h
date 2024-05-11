@@ -40,8 +40,8 @@ Uoperation uoperations[] = {
 };
 
 Boperation boperations[] = {
-    { "/",  "fdiv"},
-    {"\\",  "fdiv"},
+    { "/", "fdivp"},
+    {"\\", "fdivp"},
     { "+", "faddp"},
     { "*", "fmulp"},
     { "-", "fsubp"}

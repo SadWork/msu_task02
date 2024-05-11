@@ -9,7 +9,7 @@ typedef struct
     char *value;
 } Node;
 
-Node *create_node(void)
+Node *node_create(void)
 {
     Node *new_node = (Node *)malloc(sizeof(Node));
 
@@ -22,10 +22,14 @@ Node *create_node(void)
     return new_node;
 }
 
-void link_nodes(Node *parent, Node *child)
+void node_link_nodes(Node *parent, Node *child)
 {
-    if (parent->max_childs + 1 >= parent->number_childs)
+    if (parent->number_childs == parent->max_childs)
     {
+        if (!parent->max_childs)
+        {
+            parent->max_childs++;
+        }
         Node **new_childs_area = (Node **)realloc(parent->childs, 2 * parent->max_childs * sizeof(parent->childs[0]));
         if (new_childs_area != NULL)
         {
@@ -35,7 +39,7 @@ void link_nodes(Node *parent, Node *child)
         // TODO - обработка ошибки realloc
     }
     parent->childs[parent->number_childs] = (struct Node *)child;
-    (parent->number_childs)++;
+    parent->number_childs++;
 }
 
 void operation_tree_free(Node *root)
@@ -48,4 +52,13 @@ void operation_tree_free(Node *root)
     free(root->childs);
     free(root->value);
     free(root);
+}
+
+void operation_tree_print(Node *root)
+{
+    for (int i = 0; i < root->number_childs; ++i)
+    {
+        operation_tree_print((Node *)(root->childs[i]));
+    }
+    printf("%s\n", root->value);
 }
