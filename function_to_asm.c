@@ -19,10 +19,11 @@ void make_asm(char *s)
         но можно было бы реализовать для строки переменной длины.
 
         TODO в функции не хватает логики построения дерева операций
+        TODO вместо хранения массива is_cleaned можно просто реализовывать
+        вектор nodes как стек. В конце всегда останутся корни всех деревьев леса.
     */
     cvector section_data_vec;
     double *section_data = (double *)cvector_init(&section_data_vec, sizeof(double *));
-    Node *root           = create_node();
 
     cvector nodes_vec;
     Node **nodes = (Node **)cvector_init(&nodes_vec, sizeof(Node *));
@@ -92,7 +93,20 @@ void make_asm(char *s)
             {
                 if (!strcmp(substr, constants[i].name))
                 {
-                    printf("%lf\n", constants[i].value);
+                    double value = constants[i].value;
+                    section_data = (double *)cvector_push_back(&section_data_vec, &value);
+
+                    sprintf(int2str_buffer, "%i", num_section_data_items);
+                    int int2str_len = strlen(int2str_buffer);
+
+                    Node *new_node = create_node();
+
+                    new_node->value = (char *)malloc(sizeof("fld qword[constant]") + int2str_len);
+                    sprintf(new_node->value, "fld qword[constant%s]", int2str_buffer);
+
+                    nodes = (Node **)cvector_push_back(&nodes_vec, &new_node);
+
+                    ++num_section_data_items;
                     not_found = 0;
                     break;
                 }
@@ -133,7 +147,6 @@ void make_asm(char *s)
     section_data = (double *)cvector_free(&section_data_vec);
     nodes        = (Node **)cvector_free(&substr_vec);
     is_cleaned   = (int *)cvector_free(&is_cleaned_vec);
-    operation_tree_free(root);
 }
 
 int main(int argc, char *argv[])

@@ -68,3 +68,21 @@ void *cvector_push_back(cvector *self, void *element)
     self->size++;
     return self->data;
 }
+
+void *cvector_pop(cvector *self)
+{
+    if (self->size <= self->capacity / 2 && self->capacity > INITIAL_CAPACITY)
+    {
+        self->capacity /= 2;
+        void *tmp = realloc(self->data, self->capacity * self->sizeof_element);
+        if (tmp == NULL)
+        {
+            cvector_free(self);
+            ERROR_MSG("realloc return NULL");
+            exit(1);
+        }
+        self->data = tmp;
+    }
+    self->size--;
+    return self->data;
+}
