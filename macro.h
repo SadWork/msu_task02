@@ -2,6 +2,12 @@
 #define MACRO_H
 
 #define DEBUG
+#define CHECK_OVERFLOW(c)    (c & 0x1)
+#define SET_OVERFLOW(c)      (c |= 0x1)
+#define SKEWED_RIGHT(c)      (c & 0x2)
+#define SET_SKEWED_RIGHT(c)  (c |= 0x2)
+#define CHECK_COMMUTATIVE(c) (c & 0x4)
+#define IS_COMMUTATIVE       (0x4)
 
 #define ERROR_MSG(...) error_msg_impl(__VA_ARGS__)
 
