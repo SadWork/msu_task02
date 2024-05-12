@@ -51,6 +51,7 @@ void make_asm(char *s)
                 new_node->value = (char *)malloc(sizeof("fld qword [ebp + 8]"));
                 strcpy(new_node->value, "fld qword [ebp + 8]");
 
+                new_node->spec |= IS_COMMUTATIVE;
                 nodes     = (Node **)cvector_push_back(&nodes_vec, &new_node);
                 not_found = 0;
                 break;
@@ -107,6 +108,7 @@ void make_asm(char *s)
                     new_node->value = (char *)malloc(len * sizeof(char));
                     strcpy(new_node->value, boperations[i].translation);
 
+                    new_node->spec            = boperations[i].is_commutative;
                     nodes[nodes_vec.size - 1] = new_node;
                     // char *next = boperations[i].translation;
                     // while ((next = fsgets(substr, substr_vec.size, next)) != NULL)
@@ -160,6 +162,7 @@ void make_asm(char *s)
 
         } while (not_found = 0);
     }
+    operation_tree_to_asm(nodes[0]);
     operation_tree_print(nodes[0]);
     printf("\n");
     for (int i = 0; i < nodes_vec.size; ++i)

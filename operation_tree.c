@@ -7,6 +7,7 @@ typedef struct
     int max_childs;
     struct Node **childs;
     char *value;
+    char spec;
 } Node;
 
 Node *node_create(void)
@@ -16,6 +17,7 @@ Node *node_create(void)
     new_node->height        = 1;
     new_node->number_childs = 0;
     new_node->max_childs    = 0;
+    new_node->spec          = 0;
 
     new_node->value  = NULL;
     new_node->childs = NULL;
@@ -56,9 +58,73 @@ void operation_tree_free(Node *root)
 
 void operation_tree_print(Node *root)
 {
+    if (CHECK_OVERFLOW(root->spec))
+    {
+        operation_tree_print((Node *)(root->childs[1]));
+        printf("fstp qword[tmp]\n");
+        operation_tree_print((Node *)(root->childs[0]));
+        printf("fld qword[tmp]\n%s\n", root->value);
+        return;
+    }
+
+    if (SKEWED_RIGHT(root->spec))
+    {
+        for (int i = root->number_childs - 1; i >= 0; --i)
+        {
+            operation_tree_print((Node *)(root->childs[i]));
+        }
+        if (!CHECK_COMMUTATIVE(root->spec))
+            printf("fxch st0, st1\n");
+    }
+    else
+    {
+        for (int i = 0; i < root->number_childs; ++i)
+        {
+            operation_tree_print((Node *)(root->childs[i]));
+        }
+    }
+
+    printf("%s\n", root->value);
+}
+
+void operation_tree_to_asm(Node *root)
+{
+    // Учитывает высоты поддеревьев.
+    // TODO сейчас работает только в предположении num_childs <= 2
+
+    if (root->number_childs == 0)
+    {
+        root->height = 1;
+        return;
+    }
+
+    int max_height, min_height, height;
+    max_height = INT_MIN;
+    min_height = INT_MAX;
+
     for (int i = 0; i < root->number_childs; ++i)
     {
-        operation_tree_print((Node *)(root->childs[i]));
+        operation_tree_to_asm((Node *)(root->childs[i]));
+        height = ((Node *)(root->childs[i]))->height;
+
+        max_height = max_height < height ? height : max_height;
+        min_height = min_height > height ? height : min_height;
     }
-    printf("%s\n", root->value);
+
+    height = max_height + (min_height == max_height);
+    if (height > X87_REGISTERS_COUNT)
+    {
+        height = X87_REGISTERS_COUNT;
+        SET_OVERFLOW(root->spec);
+    }
+    if (root->number_childs == 2)
+    {
+        int height0 = ((Node *)(root->childs[0]))->height;
+        int height1 = ((Node *)(root->childs[1]))->height;
+        if (height0 < height1)
+        {
+            SET_SKEWED_RIGHT(root->spec);
+        }
+    }
+    root->height = height;
 }
