@@ -17,7 +17,6 @@ void make_asm(char *s)
     /*
         TODO сейчас всё работает на предположении, что strlen(s) < BUF_SIZE,
         но можно было бы реализовать для строки переменной длины.
-
     */
     cvector section_data_vec;
     double *section_data = (double *)cvector_init(&section_data_vec, sizeof(double *));
@@ -67,8 +66,6 @@ void make_asm(char *s)
                         exit(1);
                     }
 
-                    // TODO обновлять высоту
-
                     Node *new_node = node_create();
                     node_link_nodes(new_node, nodes[nodes_vec.size - 1]);
 
@@ -93,7 +90,6 @@ void make_asm(char *s)
             {
                 if (!strcmp(substr, boperations[i].name))
                 {
-                    // TODO обновлять высоту
                     if (nodes_vec.size < 2)
                     {
                         ERROR_MSG("Empty stack. No operands for binary operation!\n");
