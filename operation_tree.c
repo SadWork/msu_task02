@@ -56,14 +56,14 @@ void operation_tree_free(Node *root)
     free(root);
 }
 
-void operation_tree_print(Node *root)
+void operation_tree_print(Node *root, const char *indent)
 {
     if (CHECK_OVERFLOW(root->spec))
     {
-        operation_tree_print((Node *)(root->childs[1]));
-        printf("fstp qword[tmp]\n");
-        operation_tree_print((Node *)(root->childs[0]));
-        printf("fld qword[tmp]\n%s\n", root->value);
+        operation_tree_print((Node *)(root->childs[1]), indent);
+        printf("%sfstp qword[tmp]\n", indent);
+        operation_tree_print((Node *)(root->childs[0]), indent);
+        printf("%sfld qword[tmp]\n%s\n", indent, root->value);
         return;
     }
 
@@ -71,20 +71,20 @@ void operation_tree_print(Node *root)
     {
         for (int i = root->number_childs - 1; i >= 0; --i)
         {
-            operation_tree_print((Node *)(root->childs[i]));
+            operation_tree_print((Node *)(root->childs[i]), indent);
         }
         if (!CHECK_COMMUTATIVE(root->spec))
-            printf("fxch st0, st1\n");
+            printf("%sfxch st0, st1\n", indent);
     }
     else
     {
         for (int i = 0; i < root->number_childs; ++i)
         {
-            operation_tree_print((Node *)(root->childs[i]));
+            operation_tree_print((Node *)(root->childs[i]), indent);
         }
     }
 
-    printf("%s\n", root->value);
+    printf("%s%s\n", indent, root->value);
 }
 
 void operation_tree_to_asm(Node *root)

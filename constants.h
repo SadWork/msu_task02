@@ -36,18 +36,19 @@ Constant constants[] = {
 };
 
 Uoperation uoperations[] = {
-    {"sin",                      "fsin"},
-    {"cos",                      "fcos"},
-    {"tan",           "fptan\nfstp st0"},
-    {"ctg", "fptan\nfdiv st1\nfstp st1"}
+    {"sin",                          "fsin"},
+    {"cos",                          "fcos"},
+    {"tan",             "fptan\n\tfstp st0"},
+    {"ctg", "fptan\n\tfdiv st1\n\tfstp st1"}
 };
 
 Boperation boperations[] = {
-    { "/", "fdivp",              0},
-    {"\\", "fdivp",              0},
-    { "+", "faddp", IS_COMMUTATIVE},
-    { "*", "fmulp", IS_COMMUTATIVE},
-    { "-", "fsubp",              0}
+    {  "/", "fdivp",              0},
+    { "\\", "fdivp",              0},
+    {  "+", "faddp", IS_COMMUTATIVE},
+    {  "*", "fmulp", IS_COMMUTATIVE},
+    {  "-", "fsubp",              0},
+    {"–", "fsubp",              0}
 };
 
 const int num_constants   = sizeof(constants) / sizeof(constants[0]);

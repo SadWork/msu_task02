@@ -12,17 +12,14 @@
 #define BUF_SIZE                        2000
 #define MAX_LEN_INDEX_CONST_DECLARATION 15
 
-void make_asm(char *s, cvector *section_data_vec)
+Node **make_asm(char *s, cvector *section_data_vec, cvector *nodes_vec)
 {
     /*
         TODO сейчас всё работает на предположении, что strlen(s) < BUF_SIZE,
         но можно было бы реализовать для строки переменной длины.
     */
     double *section_data = (double *)(section_data_vec->data);
-
-    cvector nodes_vec;
-    Node **nodes = (Node **)cvector_init(&nodes_vec, sizeof(Node *));
-
+    Node **nodes         = (Node **)(nodes_vec->data);
     cvector substr_vec;
     cvector_init(&substr_vec, sizeof(char));
     char *substr = (char *)cvector_resize(&substr_vec, BUF_SIZE);
@@ -49,7 +46,7 @@ void make_asm(char *s, cvector *section_data_vec)
                 strcpy(new_node->value, "fld qword [ebp + 8]");
 
                 new_node->spec |= IS_COMMUTATIVE;
-                nodes     = (Node **)cvector_push_back(&nodes_vec, &new_node);
+                nodes     = (Node **)cvector_push_back(nodes_vec, &new_node);
                 not_found = 0;
                 break;
             }
@@ -58,20 +55,20 @@ void make_asm(char *s, cvector *section_data_vec)
             {
                 if (!strcmp(substr, uoperations[i].name))
                 {
-                    if (!nodes_vec.size)
+                    if (!nodes_vec->size)
                     {
                         ERROR_MSG("Empty stack. No operands for unary operation!\n");
                         exit(1);
                     }
 
                     Node *new_node = node_create();
-                    node_link_nodes(new_node, nodes[nodes_vec.size - 1]);
+                    node_link_nodes(new_node, nodes[nodes_vec->size - 1]);
 
                     int len         = strlen(uoperations[i].translation) + 1;
                     new_node->value = (char *)malloc(len * sizeof(char));
                     strcpy(new_node->value, uoperations[i].translation);
 
-                    nodes[nodes_vec.size - 1] = new_node;
+                    nodes[nodes_vec->size - 1] = new_node;
 
                     // char *next = uoperations[i].translation;
                     // while ((next = fsgets(substr, substr_vec.size, next)) != NULL)
@@ -88,22 +85,22 @@ void make_asm(char *s, cvector *section_data_vec)
             {
                 if (!strcmp(substr, boperations[i].name))
                 {
-                    if (nodes_vec.size < 2)
+                    if (nodes_vec->size < 2)
                     {
                         ERROR_MSG("Empty stack. No operands for binary operation!\n");
                         exit(1);
                     }
                     Node *new_node = node_create();
-                    node_link_nodes(new_node, nodes[nodes_vec.size - 2]);
-                    node_link_nodes(new_node, nodes[nodes_vec.size - 1]);
-                    nodes = cvector_pop(&nodes_vec);
+                    node_link_nodes(new_node, nodes[nodes_vec->size - 2]);
+                    node_link_nodes(new_node, nodes[nodes_vec->size - 1]);
+                    nodes = cvector_pop(nodes_vec);
 
                     int len         = strlen(boperations[i].translation) + 1;
                     new_node->value = (char *)malloc(len * sizeof(char));
                     strcpy(new_node->value, boperations[i].translation);
 
-                    new_node->spec            = boperations[i].is_commutative;
-                    nodes[nodes_vec.size - 1] = new_node;
+                    new_node->spec             = boperations[i].is_commutative;
+                    nodes[nodes_vec->size - 1] = new_node;
                     // char *next = boperations[i].translation;
                     // while ((next = fsgets(substr, substr_vec.size, next)) != NULL)
                     // {
@@ -130,7 +127,7 @@ void make_asm(char *s, cvector *section_data_vec)
                     new_node->value = (char *)malloc(sizeof("fld qword[constant]") + int2str_len);
                     sprintf(new_node->value, "fld qword[constant%s]", int2str_buffer);
 
-                    nodes = (Node **)cvector_push_back(&nodes_vec, &new_node);
+                    nodes = (Node **)cvector_push_back(nodes_vec, &new_node);
 
                     not_found = 0;
                     break;
@@ -150,21 +147,48 @@ void make_asm(char *s, cvector *section_data_vec)
             new_node->value = (char *)malloc(sizeof("fld qword[constant]") + int2str_len);
             sprintf(new_node->value, "fld qword[constant%s]", int2str_buffer);
 
-            nodes = (Node **)cvector_push_back(&nodes_vec, &new_node);
+            nodes = (Node **)cvector_push_back(nodes_vec, &new_node);
 
         } while (not_found = 0);
     }
     operation_tree_to_asm(nodes[0]);
-    operation_tree_print(nodes[0]);
-    printf("\n");
-    for (int i = 0; i < nodes_vec.size; ++i)
-    {
-        operation_tree_free(nodes[i]);
-    }
-    substr = (char *)cvector_free(&nodes_vec);
-    nodes  = (Node **)cvector_free(&substr_vec);
+    substr = (char *)cvector_free(&substr_vec);
+    return nodes;
 }
 
+void print_prolog(const char *indent)
+{
+    printf("%spush ebp\n", indent);
+    printf("%smov ebp, esp\n", indent);
+}
+
+void print_epilog(const char *indent)
+{
+    printf("%spop ebp\n", indent);
+    printf("%sret\n", indent);
+}
+
+void print_function(Node *root, int index)
+{
+    printf("global f%i\nf%i:\n", index, index);
+
+    static const char indent[] = "\t";
+    print_prolog(indent);
+    operation_tree_print(root, indent);
+    print_epilog(indent);
+    printf("\n");
+}
+void print_section_data(cvector *section_data_vec)
+{
+    double *section_data = (double *)section_data_vec->data;
+    printf("section .data\n");
+    for (int i = 0; i < section_data_vec->size; ++i)
+    {
+        printf("\tconstant%i dq %lf\n", i + 1, section_data[i]);
+    }
+    printf("\n");
+    printf("section .bss\n\ttmp resq 1\n");
+}
 int main(int argc, char *argv[])
 {
 #ifndef DEBUG
@@ -211,15 +235,30 @@ int main(int argc, char *argv[])
     cvector section_data_vec;
     double *section_data = (double *)cvector_init(&section_data_vec, sizeof(double *));
 
+    cvector nodes_vec;
+
     char s[BUF_SIZE];
+    printf("section .text\n");
+    int num_functions = 0;
     while (fgets(s, BUF_SIZE, file) != NULL)
     {
         if (string_is_empty(s))
         {
             continue;
         }
-        make_asm(s, &section_data_vec);
+        num_functions++;
+        Node **nodes = (Node **)cvector_init(&nodes_vec, sizeof(Node *));
+
+        nodes = make_asm(s, &section_data_vec, &nodes_vec);
+        print_function(nodes[0], num_functions);
+
+        for (int i = 0; i < nodes_vec.size; ++i)
+        {
+            operation_tree_free(nodes[i]);
+        }
+        nodes = (Node **)cvector_free(&nodes_vec);
     }
+    print_section_data(&section_data_vec);
     section_data = (double *)cvector_free(&section_data_vec);
     fclose(file);
 
