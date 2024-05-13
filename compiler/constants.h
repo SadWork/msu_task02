@@ -1,6 +1,6 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
-#include "macro.h"
+#include "../lib/macro.h"
 
 #include <limits.h>
 

@@ -1,8 +1,8 @@
+#include "../lib/cvector.c"
+#include "../lib/macro.h"
+#include "../lib/tools.c"
 #include "constants.h"
-#include "cvector.c"
-#include "macro.h"
 #include "operation_tree.c"
-#include "tools.c"
 
 #include <math.h>
 #include <stdio.h>
@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 #else
-    const char *input_file = ".debug/spec.txt";
+    const char *input_file = "../.debug/spec.txt";
 #endif
 
     FILE *file = fopen(input_file, "r");
