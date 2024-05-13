@@ -12,14 +12,13 @@
 #define BUF_SIZE                        2000
 #define MAX_LEN_INDEX_CONST_DECLARATION 15
 
-void make_asm(char *s)
+void make_asm(char *s, cvector *section_data_vec)
 {
     /*
         TODO сейчас всё работает на предположении, что strlen(s) < BUF_SIZE,
         но можно было бы реализовать для строки переменной длины.
     */
-    cvector section_data_vec;
-    double *section_data = (double *)cvector_init(&section_data_vec, sizeof(double *));
+    double *section_data = (double *)(section_data_vec->data);
 
     cvector nodes_vec;
     Node **nodes = (Node **)cvector_init(&nodes_vec, sizeof(Node *));
@@ -29,7 +28,6 @@ void make_asm(char *s)
     char *substr = (char *)cvector_resize(&substr_vec, BUF_SIZE);
 
     char int2str_buffer[MAX_LEN_INDEX_CONST_DECLARATION];
-    int num_section_data_items = 0;
     while (*s)
     {
         sscanf(s, "%s", substr);
@@ -122,9 +120,9 @@ void make_asm(char *s)
                 if (!strcmp(substr, constants[i].name))
                 {
                     double value = constants[i].value;
-                    section_data = (double *)cvector_push_back(&section_data_vec, &value);
+                    section_data = (double *)cvector_push_back(section_data_vec, &value);
 
-                    sprintf(int2str_buffer, "%i", num_section_data_items);
+                    sprintf(int2str_buffer, "%i", section_data_vec->size);
                     int int2str_len = strlen(int2str_buffer);
 
                     Node *new_node = node_create();
@@ -134,7 +132,6 @@ void make_asm(char *s)
 
                     nodes = (Node **)cvector_push_back(&nodes_vec, &new_node);
 
-                    ++num_section_data_items;
                     not_found = 0;
                     break;
                 }
@@ -143,9 +140,9 @@ void make_asm(char *s)
 
             double value;
             sscanf(substr, "%lf", &value);
-            section_data = (double *)cvector_push_back(&section_data_vec, &value);
+            section_data = (double *)cvector_push_back(section_data_vec, &value);
 
-            sprintf(int2str_buffer, "%i", num_section_data_items);
+            sprintf(int2str_buffer, "%i", section_data_vec->size);
             int int2str_len = strlen(int2str_buffer);
 
             Node *new_node = node_create();
@@ -154,7 +151,6 @@ void make_asm(char *s)
             sprintf(new_node->value, "fld qword[constant%s]", int2str_buffer);
 
             nodes = (Node **)cvector_push_back(&nodes_vec, &new_node);
-            ++num_section_data_items;
 
         } while (not_found = 0);
     }
@@ -165,9 +161,8 @@ void make_asm(char *s)
     {
         operation_tree_free(nodes[i]);
     }
-    substr       = (char *)cvector_free(&nodes_vec);
-    section_data = (double *)cvector_free(&section_data_vec);
-    nodes        = (Node **)cvector_free(&substr_vec);
+    substr = (char *)cvector_free(&nodes_vec);
+    nodes  = (Node **)cvector_free(&substr_vec);
 }
 
 int main(int argc, char *argv[])
@@ -213,6 +208,9 @@ int main(int argc, char *argv[])
     fscanf(file, "%lf%lf", &l, &r);
 
     // Основной цикл
+    cvector section_data_vec;
+    double *section_data = (double *)cvector_init(&section_data_vec, sizeof(double *));
+
     char s[BUF_SIZE];
     while (fgets(s, BUF_SIZE, file) != NULL)
     {
@@ -220,9 +218,9 @@ int main(int argc, char *argv[])
         {
             continue;
         }
-        make_asm(s);
+        make_asm(s, &section_data_vec);
     }
-
+    section_data = (double *)cvector_free(&section_data_vec);
     fclose(file);
 
     return 0;
