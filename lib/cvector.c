@@ -1,14 +1,6 @@
 #include "cvector.h"
 #define INITIAL_CAPACITY 10
 
-typedef struct
-{
-    void *data;
-    int size;
-    int capacity;
-    int sizeof_element;
-} cvector;
-
 void *cvector_init(cvector *self, int sizeof_element)
 {
     self->data = malloc(INITIAL_CAPACITY * sizeof_element);

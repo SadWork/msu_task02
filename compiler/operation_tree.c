@@ -1,15 +1,5 @@
 #include "operation_tree.h"
 
-typedef struct
-{
-    int height;
-    int number_childs;
-    int max_childs;
-    struct Node **childs;
-    char *value;
-    char spec;
-} Node;
-
 Node *node_create(void)
 {
     Node *new_node = (Node *)malloc(sizeof(Node));
