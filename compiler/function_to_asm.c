@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define EPS                             1e-3
 #define BUF_SIZE                        2000
 #define MAX_LEN_INDEX_CONST_DECLARATION 15
 

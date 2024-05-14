@@ -48,6 +48,7 @@ void operation_tree_free(Node *root)
 
 void operation_tree_print(Node *root, const char *indent)
 {
+    // TODO переносить временное значение в аппаратный стек, а не в tmp
     if (CHECK_OVERFLOW(root->spec))
     {
         operation_tree_print((Node *)(root->childs[1]), indent);
