@@ -186,7 +186,6 @@ void print_section_data(cvector *section_data_vec)
         printf("\tconstant%i dq %lf\n", i + 1, section_data[i]);
     }
     printf("\n");
-    printf("section .bss\n\ttmp resq 1\n");
 }
 int main(int argc, char *argv[])
 {

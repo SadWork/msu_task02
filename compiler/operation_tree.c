@@ -52,9 +52,12 @@ void operation_tree_print(Node *root, const char *indent)
     if (CHECK_OVERFLOW(root->spec))
     {
         operation_tree_print((Node *)(root->childs[1]), indent);
-        printf("%sfstp qword[tmp]\n", indent);
+        printf("%ssub esp, 8\n", indent);
+        printf("%sfstp qword[esp]\n", indent);
         operation_tree_print((Node *)(root->childs[0]), indent);
-        printf("%sfld qword[tmp]\n%s\n", indent, root->value);
+        printf("%sfld qword[esp]\n", indent);
+        printf("%sadd esp, 8\n", indent);
+        printf("%s%s\n", indent, root->value);
         return;
     }
 
