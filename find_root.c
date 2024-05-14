@@ -5,11 +5,12 @@
 
 #define EPS      1e-6
 #define MAX_ITER 1000
-#define COMBINED_METHOD
 
 #ifdef BISECTION_METHOD
-double find_root(double l, double r, double (*func)(double))
+double find_root(double l, double r, double (*func)(double), int *itrs)
 {
+    *itrs        = 0;
+    int cnt_itrs = 0;
     l += EPS, r -= EPS;
     if (r - l < EPS)
     {
@@ -42,12 +43,17 @@ double find_root(double l, double r, double (*func)(double))
         {
             l = m;
         }
+        cnt_itrs++;
     }
+    *itrs = cnt_itrs;
+
     return m;
 }
 #elif defined(SECANT_METHOD)
-double find_root(double l, double r, double (*func)(double))
+double find_root(double l, double r, double (*func)(double), int *itrs)
 {
+    *itrs        = 0;
+    int cnt_itrs = 0;
     l += EPS, r -= EPS;
     if (r - l < EPS)
     {
@@ -87,8 +93,9 @@ double find_root(double l, double r, double (*func)(double))
             r  = m;
             yr = ym;
         }
+        cnt_itrs++;
     }
-
+    *itrs = cnt_itrs;
     return m;
 }
 #elif defined(NEWTON_METHOD)
@@ -98,8 +105,10 @@ double func_deriv(double x, double (*func)(double)) // error = O(eps^3)
     double first_der = (f2 - f3) / (2 * EPS);
     return first_der;
 }
-double find_root(double l, double r, double (*func)(double))
+double find_root(double l, double r, double (*func)(double), int *itrs)
 {
+    *itrs        = 0;
+    int cnt_itrs = 0;
     l += EPS, r -= EPS;
     if (r - l < EPS)
     {
@@ -119,7 +128,10 @@ double find_root(double l, double r, double (*func)(double))
 
         cur_x = next_x;
         y     = func(cur_x);
+        cnt_itrs++;
     }
+    *itrs = cnt_itrs;
+
     return cur_x;
 }
 #else // COMBINDE_METHOD
@@ -136,8 +148,11 @@ double func_deriv(double x, double (*func)(double)) // error = O(eps^3)
     return first_der;
 }
 
-double find_root(double l, double r, double (*func)(double))
+double find_root(double l, double r, double (*func)(double), int *itrs)
 {
+    *itrs        = 0;
+    int cnt_itrs = 0;
+
     l += EPS, r -= EPS;
     if (r - l < EPS)
     {
@@ -171,14 +186,21 @@ double find_root(double l, double r, double (*func)(double))
             r = m_secant, l = m_newton;
         }
         y = func((l + r) / 2);
+        cnt_itrs++;
     }
+    *itrs = cnt_itrs;
     return (l + r) / 2;
 }
 
 #endif
-double f1(double x) { return x * x - 2; };
+
+#ifdef DEBUG
+extern double f1(double);
 int main()
 {
-    printf("%.12lf\n", find_root(-4, 4, f1));
+    int iters  = 0;
+    double ans = find_root(-1, 1, f1, &iters);
+    printf("%.12lf %i\n", ans, iters);
     return 0;
 }
+#endif
