@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define EPS 1e-6
-#define BISECTION_METHOD
+#define SECANT_METHOD
 
 #ifdef BISECTION_METHOD
 void find_roots(cvector *x, double l, double r, double (*func)(double))
@@ -46,19 +46,66 @@ void find_roots(cvector *x, double l, double r, double (*func)(double))
     cvector_push_back(x, &m);
     find_roots(x, m + EPS, r - EPS, func);
 }
-#elif SECANT_METHOD
+#elif defined(SECANT_METHOD)
+void find_roots(cvector *x, double l, double r, double (*func)(double))
+{
+    double cur_l = l + EPS, cur_r = r - EPS;
+    if (cur_r - cur_l < EPS)
+    {
+        return;
+    }
 
-#elif NEWTON_METHOD
+    double yl = func(cur_l), yr = func(cur_r);
+    if (!(signbit(yl) ^ signbit(yr)))
+    {
+        return; // Одинаковые знаки на концах отрезка
+    }
+
+    if (yl > yr)
+    {
+        double tmp = yr;
+        yr         = yl;
+        yl         = tmp;
+    }
+
+    double m;
+    while (fabs(cur_r - cur_l) > EPS)
+    {
+        m         = cur_r - (yr * (cur_r - cur_l) / (yr - yl));
+        double ym = func(m);
+
+        if (fabs(ym) < EPS)
+        {
+            break; // Нашли корень с нужной точностью
+        }
+
+        if (signbit(ym) == signbit(yl))
+        {
+            cur_l = m;
+            yl    = ym;
+        }
+        else
+        {
+            cur_r = m;
+            yr    = ym;
+        }
+    }
+
+    find_roots(x, l + EPS, m - EPS, func);
+    cvector_push_back(x, &m);
+    find_roots(x, m + EPS, r - EPS, func);
+}
+#elif defined(NEWTON_METHOD)
 
 #else // COMBINDE_METHOD
 
 #endif
-extern double f1(double);
+double f1(double x) { return x + 2; };
 int main()
 {
     cvector x_vec;
     double *x = cvector_init(&x_vec, sizeof(double));
-    find_roots(&x_vec, 0, 4, f1);
+    find_roots(&x_vec, -4, 4, f1);
     x = cvector_free(&x_vec);
     return 0;
 }
