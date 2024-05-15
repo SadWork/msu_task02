@@ -229,6 +229,12 @@ int main(int argc, char *argv[])
     double l, r;
     fscanf(file, "%lf%lf", &l, &r);
 
+    const char *output_file = "segment.h";
+    FILE *output            = fopen(output_file, "w");
+    fprintf(output, "const double LEFT_EDGE = %f;\n", l);
+    fprintf(output, "const double RIGHT_EDGE = %f;\n", r);
+    fclose(output);
+
     // Основной цикл
     cvector section_data_vec;
     double *section_data = (double *)cvector_init(&section_data_vec, sizeof(double *));

@@ -1,7 +1,7 @@
 #ifndef MACRO_H
 #define MACRO_H
 
-#define DEBUG
+// #define DEBUG
 #define CHECK_OVERFLOW(c)    (c & 0x1)
 #define SET_OVERFLOW(c)      (c |= 0x1)
 #define SKEWED_RIGHT(c)      (c & 0x2)
