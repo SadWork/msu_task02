@@ -1,60 +1,13 @@
-#include "lib/cvector.c"
 #include "lib/macro.h"
 
 #include <math.h>
+#include <stdio.h>
 
 #define EPS      1e-6
 #define MAX_ITER 1000
-
-extern double f1(double);
-extern double f2(double);
-extern double f3(double);
-
+// #define NEWTON_METHOD
 #ifdef BISECTION_METHOD
-double root(double l, double r, double (*func)(double), int *itrs)
-{
-    *itrs        = 0;
-    int cnt_itrs = 0;
-    l += EPS, r -= EPS;
-    if (r - l < EPS)
-    {
-        return NAN;
-    }
-
-    double yl = func(l), yr = func(r);
-    if (!(signbit(yl) ^ signbit(r)))
-    {
-        return NAN; // Одинаковые знаки на концах отрезка
-    }
-
-    if (yl > yr)
-    {
-        double tmp = yr;
-        // Сохраняем инвариант yl <= 0, yr > 0
-        yr = yl;
-        yl = tmp;
-    }
-
-    double m;
-    while (r - l > EPS)
-    {
-        m = (l + r) / 2;
-        if (func(m) > 0)
-        {
-            r = m;
-        }
-        else
-        {
-            l = m;
-        }
-        cnt_itrs++;
-    }
-    *itrs = cnt_itrs;
-
-    return m;
-}
-#elif defined(SECANT_METHOD)
-double root(double l, double r, double (*func)(double), int *itrs)
+double find_root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
     int cnt_itrs = 0;
@@ -72,11 +25,58 @@ double root(double l, double r, double (*func)(double), int *itrs)
 
     if (yl > yr)
     {
-        double tmp = yr;
-        yr         = yl;
-        yl         = tmp;
+        double tmp = r;
+        // Сохраняем инвариант yl <= 0, yr > 0
+        r = l;
+        l = tmp;
     }
+
     double m;
+    while (fabs(r - l) > EPS)
+    {
+        m = (l + r) / 2;
+        if (func(m) > 0)
+        {
+            r = m;
+        }
+        else
+        {
+            l = m;
+        }
+        cnt_itrs++;
+    }
+    *itrs = cnt_itrs;
+
+    return m;
+}
+#elif defined(SECANT_METHOD)
+double find_root(double l, double r, double (*func)(double), int *itrs)
+{
+    *itrs        = 0;
+    int cnt_itrs = 0;
+    l += EPS, r -= EPS;
+    if (r - l < EPS)
+    {
+        return NAN;
+    }
+
+    double yl = func(l), yr = func(r);
+    if (!(signbit(yl) ^ signbit(yr)))
+    {
+        return NAN; // Одинаковые знаки на концах отрезка
+    }
+
+    if (yl > yr)
+    {
+        double tmp = r;
+        r          = l;
+        l          = tmp;
+
+        tmp = yr;
+        yr  = yl;
+        yl  = tmp;
+    }
+    double m = 0;
     while (fabs(r - l) > EPS)
     {
         m         = r - (yr * (r - l) / (yr - yl));
@@ -109,7 +109,7 @@ double func_deriv(double x, double (*func)(double)) // error = O(eps^3)
     double first_der = (f2 - f3) / (2 * EPS);
     return first_der;
 }
-double root(double l, double r, double (*func)(double), int *itrs)
+double find_root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
     int cnt_itrs = 0;
@@ -152,7 +152,7 @@ double func_deriv(double x, double (*func)(double)) // error = O(eps^3)
     return first_der;
 }
 
-double root(double l, double r, double (*func)(double), int *itrs)
+double find_root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
     int cnt_itrs = 0;
@@ -199,11 +199,12 @@ double root(double l, double r, double (*func)(double), int *itrs)
 #endif
 
 #ifdef DEBUG
+double f1(double x) { return x; }
 
 int main()
 {
     int iters  = 0;
-    double ans = root(-1, 1, f1, &iters);
+    double ans = find_root(-1, 1, f1, &iters);
     printf("%.12lf %i\n", ans, iters);
     return 0;
 }
