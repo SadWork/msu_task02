@@ -6,8 +6,12 @@
 #define EPS      1e-6
 #define MAX_ITER 1000
 
+extern double f1(double);
+extern double f2(double);
+extern double f3(double);
+
 #ifdef BISECTION_METHOD
-double find_root(double l, double r, double (*func)(double), int *itrs)
+double root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
     int cnt_itrs = 0;
@@ -50,7 +54,7 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
     return m;
 }
 #elif defined(SECANT_METHOD)
-double find_root(double l, double r, double (*func)(double), int *itrs)
+double root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
     int cnt_itrs = 0;
@@ -105,7 +109,7 @@ double func_deriv(double x, double (*func)(double)) // error = O(eps^3)
     double first_der = (f2 - f3) / (2 * EPS);
     return first_der;
 }
-double find_root(double l, double r, double (*func)(double), int *itrs)
+double root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
     int cnt_itrs = 0;
@@ -148,7 +152,7 @@ double func_deriv(double x, double (*func)(double)) // error = O(eps^3)
     return first_der;
 }
 
-double find_root(double l, double r, double (*func)(double), int *itrs)
+double root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
     int cnt_itrs = 0;
@@ -195,11 +199,11 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
 #endif
 
 #ifdef DEBUG
-extern double f1(double);
+
 int main()
 {
     int iters  = 0;
-    double ans = find_root(-1, 1, f1, &iters);
+    double ans = root(-1, 1, f1, &iters);
     printf("%.12lf %i\n", ans, iters);
     return 0;
 }
