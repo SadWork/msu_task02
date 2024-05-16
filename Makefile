@@ -1,4 +1,4 @@
-CFLAGS ?= -Wall -O3
+CFLAGS ?= -O3
 
 all: prog.efi
 

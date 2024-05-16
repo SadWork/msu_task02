@@ -7,6 +7,8 @@
 #define MAX_ITER 1000
 // #define NEWTON_METHOD
 #ifdef BISECTION_METHOD
+const char METHOD_NAME[] = "BISECTION METHOD";
+
 double find_root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
@@ -50,6 +52,8 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
     return m;
 }
 #elif defined(SECANT_METHOD)
+const char METHOD_NAME[] = "SECANT METHOD";
+
 double find_root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
@@ -103,6 +107,8 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
     return m;
 }
 #elif defined(NEWTON_METHOD)
+const char METHOD_NAME[] = "NEWTON METHOD";
+
 double func_deriv(double x, double (*func)(double)) // error = O(eps^3)
 {
     double f2 = func(x + EPS), f3 = func(x - EPS);
@@ -138,7 +144,9 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
 
     return cur_x;
 }
-#else // COMBINDE_METHOD
+#else // COMBINED_METHOD
+const char METHOD_NAME[] = "COMBINED METHOD";
+
 double func_second_derivative(double x, double (*func)(double)) // error = O(eps^4)
 {
     double f1 = func(x), f2 = func(x + EPS), f3 = func(x - EPS);
