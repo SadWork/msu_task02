@@ -3,6 +3,7 @@
 #include "segment.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 extern double f1(double);
 extern double f2(double);
@@ -11,6 +12,31 @@ extern double f3(double);
 double g12(double x) { return f1(x) - f2(x); }
 double g13(double x) { return f1(x) - f3(x); }
 double g23(double x) { return f2(x) - f3(x); }
+
+typedef struct
+{
+    double x;
+    double (*func)(double);
+} FuncAndPoint;
+
+int compareFuncAndPoint(const void *a, const void *b)
+{
+    FuncAndPoint *fa = (FuncAndPoint *)a;
+    FuncAndPoint *fb = (FuncAndPoint *)b;
+
+    if (fa->x < fb->x)
+    {
+        return -1;
+    }
+    else if (fa->x > fb->x)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 
 void print_help()
 {
@@ -59,14 +85,20 @@ int main(int argc, char *argv[])
         printf("%s is used now to find intersections\n", METHOD_NAME);
         printf("%s is used now to find integrals\n", INTEGRAL_METHOD);
     }
+    FuncAndPoint func_arr[3];
 
     int itrs      = 0;
     double root12 = find_root(LEFT_EDGE, RIGHT_EDGE, g12, &itrs);
-    int itrs12    = itrs;
+    func_arr[0].x = root12, func_arr[0].func = g12;
+    int itrs12 = itrs;
+
     double root13 = find_root(LEFT_EDGE, RIGHT_EDGE, g13, &itrs);
-    int itrs13    = itrs;
+    func_arr[1].x = root13, func_arr[1].func = g13;
+    int itrs13 = itrs;
+
     double root23 = find_root(LEFT_EDGE, RIGHT_EDGE, g23, &itrs);
-    int itrs23    = itrs;
+    func_arr[2].x = root23, func_arr[2].func = g23;
+    int itrs23 = itrs;
 
     if (print_abscissas)
     {
@@ -81,5 +113,10 @@ int main(int argc, char *argv[])
         printf("to find f2 and f3 intersectoin spent iterations: %d\n", itrs23);
     }
 
+    qsort(func_arr, sizeof(func_arr) / sizeof(func_arr[0]), sizeof(func_arr[0]), compareFuncAndPoint);
+    double S = fabs(find_integral(func_arr[0].x, func_arr[1].x, func_arr[0].func));
+    S += fabs(find_integral(func_arr[1].x, func_arr[2].x, func_arr[2].func));
+
+    printf("%lf\n", S);
     return 0;
 }
