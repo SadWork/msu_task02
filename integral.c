@@ -1,0 +1,7 @@
+#ifdef RECTANGLE_RULE
+const char INTEGRAL_METHOD[] = "RECTANGLE RULE";
+#elif defined(TRAPEZOIDAL_RULE)
+const char INTEGRAL_METHOD[] = "TRAPEZOIDAL RULE";
+#else // SIMPSON'S_RULE
+const char INTEGRAL_METHOD[] = "SIMPSON'S RULE";
+#endif

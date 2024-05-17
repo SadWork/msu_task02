@@ -1,3 +1,4 @@
+#include "integral.h"
 #include "root.h"
 #include "segment.h"
 
@@ -76,7 +77,8 @@ int main(int argc, char *argv[])
     }
     if (print_method)
     {
-        printf("%s is used now\n", METHOD_NAME);
+        printf("%s is used now to find intersections\n", METHOD_NAME);
+        printf("%s is used now to find integrals\n", INTEGRAL_METHOD);
     }
 
     return 0;
