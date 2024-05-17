@@ -54,6 +54,11 @@ int main(int argc, char *argv[])
             return 1;
         }
     }
+    if (print_method)
+    {
+        printf("%s is used now to find intersections\n", METHOD_NAME);
+        printf("%s is used now to find integrals\n", INTEGRAL_METHOD);
+    }
 
     int itrs      = 0;
     double root12 = find_root(LEFT_EDGE, RIGHT_EDGE, g12, &itrs);
@@ -74,11 +79,6 @@ int main(int argc, char *argv[])
         printf("to find f1 and f2 intersectoin spent iterations: %d\n", itrs12);
         printf("to find f1 and f3 intersectoin spent iterations: %d\n", itrs13);
         printf("to find f2 and f3 intersectoin spent iterations: %d\n", itrs23);
-    }
-    if (print_method)
-    {
-        printf("%s is used now to find intersections\n", METHOD_NAME);
-        printf("%s is used now to find integrals\n", INTEGRAL_METHOD);
     }
 
     return 0;
