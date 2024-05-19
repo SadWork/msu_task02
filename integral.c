@@ -10,7 +10,7 @@ int main(void)
     return 0;
 }
 #endif
-
+#include <math.h>
 #define EPS 1e-3
 // #define TRAPEZOIDAL_RULE
 // #define RECTANGLE_RULE
@@ -21,7 +21,7 @@ double find_integral(double l, double r, double (*func)(double))
 {
     double len = r - l;
 
-    int n = ceil(len * len / EPS / 2); // предполагается f'(x) = 1.0 в каком-то приближении
+    int n = ceil(len * len * len / EPS / 2); // предполагается f'(x) = 1.0 в каком-то приближении
 
     double h = len / n;
 
