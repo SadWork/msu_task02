@@ -1,0 +1,10 @@
+\babel@toc {russian}{}\relax 
+\contentsline {section}{Постановка задачи}{2}{}%
+\contentsline {section}{Математическое обоснование}{3}{}%
+\contentsline {section}{Результаты экспериментов}{4}{}%
+\contentsline {section}{Структура программы и спецификация функций}{5}{}%
+\contentsline {section}{Сборка программы (Make-файл)}{6}{}%
+\contentsline {section}{Отладка программы, тестирование функций}{7}{}%
+\contentsline {section}{Программа на Си и на Ассемблере}{8}{}%
+\contentsline {section}{Анализ допущенных ошибок}{9}{}%
+\contentsline {section}{Список цитируемой литературы}{10}{}%
