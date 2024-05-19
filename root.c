@@ -3,8 +3,8 @@
 #include <math.h>
 #include <stdio.h>
 
-#define EPS      1e-6
 #define MAX_ITER 1000
+double EPS1 = 1e-3;
 // #define NEWTON_METHOD
 #ifdef BISECTION_METHOD
 const char METHOD_NAME[] = "BISECTION METHOD";
@@ -13,8 +13,8 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
     int cnt_itrs = 0;
-    l += EPS, r -= EPS;
-    if (r - l < EPS)
+    l += EPS1, r -= EPS1;
+    if (r - l < EPS1)
     {
         return NAN;
     }
@@ -34,7 +34,7 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
     }
 
     double m;
-    while (fabs(r - l) > EPS)
+    while (fabs(r - l) > EPS1)
     {
         m = (l + r) / 2;
         if (func(m) > 0)
@@ -58,8 +58,8 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
     int cnt_itrs = 0;
-    l += EPS, r -= EPS;
-    if (r - l < EPS)
+    l += EPS1, r -= EPS1;
+    if (r - l < EPS1)
     {
         return NAN;
     }
@@ -81,12 +81,12 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
         yl  = tmp;
     }
     double m = 0;
-    while (fabs(r - l) > EPS)
+    while (fabs(r - l) > EPS1)
     {
         m         = r - (yr * (r - l) / (yr - yl));
         double ym = func(m);
 
-        if (fabs(ym) < EPS)
+        if (fabs(ym) < EPS1)
         {
             break; // Нашли корень с нужной точностью
         }
@@ -109,28 +109,28 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
 #elif defined(NEWTON_METHOD)
 const char METHOD_NAME[] = "NEWTON METHOD";
 
-double func_deriv(double x, double (*func)(double)) // error = O(eps^3)
+double func_deriv(double x, double (*func)(double)) // error = O(EPS1^3)
 {
-    double f2 = func(x + EPS), f3 = func(x - EPS);
-    double first_der = (f2 - f3) / (2 * EPS);
+    double f2 = func(x + EPS1), f3 = func(x - EPS1);
+    double first_der = (f2 - f3) / (2 * EPS1);
     return first_der;
 }
 double find_root(double l, double r, double (*func)(double), int *itrs)
 {
     *itrs        = 0;
     int cnt_itrs = 0;
-    l += EPS, r -= EPS;
-    if (r - l < EPS)
+    l += EPS1, r -= EPS1;
+    if (r - l < EPS1)
     {
         return NAN;
     }
     double cur_x = r; // Начальное приближение — середина интервала
 
     double y = func(cur_x);
-    while (fabs(y) > EPS)
+    while (fabs(y) > EPS1)
     {
         double y_prime = func_deriv(cur_x, func);
-        if (fabs(y_prime) < EPS)
+        if (fabs(y_prime) < EPS1)
         {
             return NAN;
         }
@@ -147,16 +147,16 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
 #else // COMBINED_METHOD
 const char METHOD_NAME[] = "COMBINED METHOD";
 
-double func_second_derivative(double x, double (*func)(double)) // error = O(eps^4)
+double func_second_derivative(double x, double (*func)(double)) // error = O(EPS1^4)
 {
-    double f1 = func(x), f2 = func(x + EPS), f3 = func(x - EPS);
-    double second_der = (f2 + f3 - 2 * f1) / EPS / EPS;
+    double f1 = func(x), f2 = func(x + EPS1), f3 = func(x - EPS1);
+    double second_der = (f2 + f3 - 2 * f1) / EPS1 / EPS1;
     return second_der;
 }
-double func_deriv(double x, double (*func)(double)) // error = O(eps^3)
+double func_deriv(double x, double (*func)(double)) // error = O(EPS1^3)
 {
-    double f2 = func(x + EPS), f3 = func(x - EPS);
-    double first_der = (f2 - f3) / (2 * EPS);
+    double f2 = func(x + EPS1), f3 = func(x - EPS1);
+    double first_der = (f2 - f3) / (2 * EPS1);
     return first_der;
 }
 
@@ -165,21 +165,21 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
     *itrs        = 0;
     int cnt_itrs = 0;
 
-    l += EPS, r -= EPS;
-    if (r - l < EPS)
+    l += EPS1, r -= EPS1;
+    if (r - l < EPS1)
     {
         return NAN;
     }
 
     double y = func((r + l) / 2);
-    while (fabs(y) > EPS)
+    while (fabs(y) > EPS1)
     {
         double yl = func(l), yr = func(r);
 
         double y_prime        = func_deriv((l + r) / 2, func);
         double y_double_prime = func_second_derivative((l + r) / 2, func);
 
-        if (fabs(y_prime) < EPS)
+        if (fabs(y_prime) < EPS1)
         {
             return NAN;
         }

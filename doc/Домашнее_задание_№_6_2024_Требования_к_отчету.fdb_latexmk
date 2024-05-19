@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1716117093.87652 "Домашнее_задание_№_6_2024_Требования_к_отчету.tex" "Домашнее_задание_№_6_2024_Требования_к_отчету.pdf" "Домашнее_задание_№_6_2024_Требования_к_отчету" 1716117095.15454 0
+["pdflatex"] 1716122835.10521 "Домашнее_задание_№_6_2024_Требования_к_отчету.tex" "Домашнее_задание_№_6_2024_Требования_к_отчету.pdf" "Домашнее_задание_№_6_2024_Требования_к_отчету" 1716122836.45969 0
   "/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc" 1136849721 3141 82d5616418ed8d5de703b3951bedecb4 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -21,12 +21,15 @@
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm" 1136768653 1124 6c73e740cf17375f03eec0ee63599741 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmsy6.tfm" 1136768653 1116 933a60c408fc0a863a92debe84b2d294 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm" 1136768653 1120 8b7d695260f3cff42e636090a8002094 ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb" 1248133631 30251 6afa5cb1d0204815a708a080681d4674 ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb" 1248133631 36741 fa121aac0049305630cf160b86157ee4 ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb" 1248133631 37166 8ab3487cbe3ab49ebce74c29ea2418db ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb" 1248133631 35469 70d41d2b9ea31d5d813066df7c99281c ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb" 1248133631 32722 d7379af29a190c3f453aba36302ff5a9 ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb" 1248133631 32734 69e00a6b65cedb993666e42eedb3d48f ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1248133631 32726 0a1aea6fcd6468ee2cf64d891f5c43c8 ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb" 1248133631 32587 1788b0c1c5b39540c96f5e42ccd6dae8 ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb" 1248133631 32626 4f5c1b83753b1dd3a97d1b399a005b4b ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb" 1248133631 34694 ad62b13721ee8eda1dcc8993c8bd7041 ""
   "/usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb" 1215737283 140176 d4962f948b4cc0adf4d3dde77a128c95 ""
@@ -199,9 +202,9 @@
   "/var/cache/fonts/tfm/lh/lh-t2a/larm1728.tfm" 1707577524.96247 3252 92d08740ce00199d6cf9ff4aaada81d1 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1713736879.99105 330150 bb3e73ed53e64d39b158a23f2cb6d58c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1713737143 6877538 34fef73984fb1092393b697673b1e943 ""
-  "Домашнее_задание_№_6_2024_Требования_к_отчету.aux" 1716117095.04411 1999 12aacf14e30bc244a54e430feb33feca "pdflatex"
-  "Домашнее_задание_№_6_2024_Требования_к_отчету.tex" 1716103348.65088 22642 df50c81d08417f9421c029f5f4d94f23 ""
-  "Домашнее_задание_№_6_2024_Требования_к_отчету.toc" 1716117095.04411 808 2f47707f088fb5cd2a0dff21b937aaf3 "pdflatex"
+  "Домашнее_задание_№_6_2024_Требования_к_отчету.aux" 1716122836.32993 2447 5a09bc0181c51b31625aa9c54c72d391 "pdflatex"
+  "Домашнее_задание_№_6_2024_Требования_к_отчету.tex" 1716122833.68796 26249 e30ffbb6ad23d4dac3b08ea7f0e27b74 ""
+  "Домашнее_задание_№_6_2024_Требования_к_отчету.toc" 1716122836.32993 1133 eb4d0f891377f2bd3d4d9f01d2281957 "pdflatex"
   (generated)
   "Домашнее_задание_№_6_2024_Требования_к_отчету.aux"
   "Домашнее_задание_№_6_2024_Требования_к_отчету.log"
