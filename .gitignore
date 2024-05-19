@@ -2,3 +2,13 @@
 *.efi
 .debug
 *.o
+
+# Временные файлы, создаваемые при компиляции latex
+*.aux
+*.fdb_latexmk
+*.fls
+*.gz
+*.log
+*.out
+*.toc
+
