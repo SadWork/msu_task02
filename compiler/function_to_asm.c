@@ -148,7 +148,7 @@ Node **make_asm(char *s, cvector *section_data_vec, cvector *nodes_vec)
 
             nodes = (Node **)cvector_push_back(nodes_vec, &new_node);
 
-        } while (not_found = 0);
+        } while ((not_found = 0));
     }
     operation_tree_to_asm(nodes[0]);
     substr = (char *)cvector_free(&substr_vec);
