@@ -2,7 +2,6 @@
 
 #include <math.h>
 #include <stdio.h>
-
 #define MAX_ITER 1000
 double EPS1 = 1e-3;
 // #define NEWTON_METHOD
@@ -207,12 +206,12 @@ double find_root(double l, double r, double (*func)(double), int *itrs)
 #endif
 
 #ifdef DEBUG
-double f1(double x) { return x; }
+double f1(double x) { return cos(x); }
 
 int main()
 {
     int iters  = 0;
-    double ans = find_root(-1, 1, f1, &iters);
+    double ans = find_root(1, 4, f1, &iters);
     printf("%.12lf %i\n", ans, iters);
     return 0;
 }
