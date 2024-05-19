@@ -10,9 +10,14 @@
 \usepackage{pgfplots}            % для вывода графиков функций
 \usepackage{geometry}		 % для настройки размера полей
 \usepackage{indentfirst}         % для отступа в первом абзаце секции
+\usepackage{verbatim}
 
 \setlength{\abovedisplayskip}{5mm}
 \setlength{\belowdisplayskip}{5mm}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
 % выбираем размер листа А4, все поля ставим по 3см
 \geometry{a4paper,left=30mm,top=30mm,bottom=30mm,right=30mm}
 
@@ -324,7 +329,9 @@ $a' = a + \varepsilon_1,~b'=b+\varepsilon_1$
 
 Для задания необходимых методов вычисления точки пересечения и функции, по которым будут производится вычисления интегралов, нужно использовать аргументы CFLAGS при вызове make all. Например, для компиляции проекта с использованием метода Ньютона и формулы прямоугольников можно использовать следующую команду:
 
-make clean && CFLAGS="-DNEWTON\_METHOD -DRECTANGLE\_RULE" make all
+\begin{verbatim}
+make clean && CFLAGS="-DNEWTON_METHOD -DRECTANGLE_RULE" make all
+\end{verbatim}
 
 \newpage
 
